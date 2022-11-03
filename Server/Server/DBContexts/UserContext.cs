@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Server.DBContexts
 {
-    public class ServerContext
+    public class UserContext
     {
         public string ConnectionString { get; set; }
 
-        public ServerContext(string connectionString)
+        public UserContext(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
@@ -19,22 +19,24 @@ namespace Server.DBContexts
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<Number> GetAllNumbers()
+        public List<User> GetAllUsers()
         {
-            List<Number> list = new List<Number>();
+            List<User> list = new List<User>();
 
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM numbers;", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM users;", conn);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        list.Add(new Number()
+                        list.Add(new User()
                         {
                             id = reader.GetInt32("id"),
-                            content = reader.GetInt32("content")
+                            name = reader.GetString("name"),
+                            password = reader.GetString("password")
+
                         });
                     }
                 }
@@ -42,71 +44,79 @@ namespace Server.DBContexts
 
             return list;
         }
-        public Number GetNumber(int id)
+        public User GetUser(int id)
         {
-            Number number = null;
+            User user = null;
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM numbers where id='" + id + "';", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM users where id='" + id + "';", conn);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        number = new Number()
+                        user = new User()
                         {
                             id = reader.GetInt32("id"),
-                            content = reader.GetInt32("content"),
+                            name = reader.GetString("name"),
+                            password = reader.GetString("password")
                         };
                     }
                 }
             }
 
-            return number;
+            return user;
         }
-        public Number AddNumber(int content)
+        public User AddUser(string name, string password)
         {
-            Number num = new Number();
+            User user = new User();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand(
-                    String.Format("insert into numbers (content) values('{0}');",
-                    content),
+                    String.Format("insert into users (name, password) values('{0}', '{1}');",
+                    name, password),
                     conn);
                 cmd.ExecuteNonQuery();
             }
 
-            num.content = content;
+            user.name = name;
+            user.password = password;
 
-            return num;
+            return user;
         }
 
-        public Number ChangeNumber(int id, int content)
+        public User ChangeUser(int id, string name, string password)
         {
-            Number num = new Number();
+            User user = new User();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand(
-                    String.Format("update numbers set content='" + content + "' where id='" + id + "';",
-                    content),
+                MySqlCommand cmd1 = new MySqlCommand(
+                    String.Format("update users set name='" + name + "' where id='" + id + "';",
+                    name),
                     conn);
-                cmd.ExecuteNonQuery();
+                MySqlCommand cmd2 = new MySqlCommand(
+                    String.Format("update users set password='" + password + "' where id='" + id + "';",
+                    password),
+                    conn);
+                cmd1.ExecuteNonQuery();
+                cmd2.ExecuteNonQuery();
             }
 
-            num.content = content;
+            user.name = name;
+            user.password = password;
 
-            return num;
+            return user;
         }
 
-        public bool DeleteNumber(int id)
+        public bool DeleteUser(int id)
         {
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand(
-                    String.Format("delete from numbers where id = '" + id + "';"),
+                    String.Format("delete from users where id = '" + id + "';"),
                     conn);
                 cmd.ExecuteNonQuery();
             }

@@ -28,6 +28,8 @@ namespace Server
             services.AddControllers();
             services.Add(new ServiceDescriptor(typeof(ServerContext),
                 new ServerContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(UserContext),
+                new UserContext(Configuration.GetConnectionString("DefaultConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
