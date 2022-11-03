@@ -1,9 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using plinia.dbcontexts;
+using System;
+using System.Collections.Generic;
+using System.Web;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace plinia.Controllers
 {
+    [HttpPost("/register")]
+    public IActionResult Post([FromForm] string name, [FromForm] string email, [FromForm] string password)
+    {
+
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class Controller : ControllerBase
