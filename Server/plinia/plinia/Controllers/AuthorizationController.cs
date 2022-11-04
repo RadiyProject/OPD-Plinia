@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using plinia.dbcontexts;
 using System;
@@ -9,46 +10,98 @@ using System.Web;
 
 namespace plinia.Controllers
 {
+
     [HttpPost("/register")]
     public IActionResult Post([FromForm] string name, [FromForm] string email, [FromForm] string password)
     {
+        using (UsersContexts db = new UsersContexts())
+        {
+            var users = db.Users.ToList();
+            foreach (User u in users)
+                if (u.name == name)
+                    return BadRequestкуRE("Пользователь с таким именем уже существует.");
 
+            User user = new User
+            {
+                name = name,
+                email = email,//добавить проверку на существование почты
+                password = password
+            };
+
+            db.Users.Add(user);
+            db.SaveChanges();
+        }
+        return Ok("Пользователь успешно зарегистрирован!");
     }
 
-    [Route("api/[controller]")]
-    [ApiController]
-    public class Controller : ControllerBase
+    IActionResult BadRequestResult(string v)
     {
-        // GET: api/<Controller>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        throw new NotImplementedException();
+    }
+
+    [Route("api/user")]
+    [ApiController]
+    public class UserController : ControllerBase
+    {
+        string[] objs = { "1", "3", "2", "4", "6" };
+        // GET: api/<UserController>
+        [HttpGet("getall")]
+        public ActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+            var result = context.GetAllUsers();
+            if (result == null)
+                return NoContent();
+            else
+                return Ok(result);
         }
 
-        // GET api/<Controller>/5
+        // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult Get(int id)
         {
-            return "value";
+            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+            var result = context.GetUser(id);
+            if (result == null)
+                return NoContent();
+            else
+                return Ok(result);
         }
 
-        // POST api/<Controller>
+        // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult Post([FromForm] IFormCollection data)
         {
+            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+            var result = context.AddUser(data["name"], data["password"]);
+            if (result == null)
+                return BadRequest();
+            else
+                return Ok(result);
         }
 
-        // PUT api/<Controller>/5
+        // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult Put(int id, [FromForm] IFormCollection data)
         {
+            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+            var result = context.ChangeUser(id, data["name"], data["password"]);
+            if (result == null)
+                return BadRequest();
+            else
+                return Ok(result);
         }
 
-        // DELETE api/<Controller>/5
+        // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+            var result = context.DeleteNumber(id);
+            if (result == false)
+                return BadRequest();
+            else
+                return Ok(result);
         }
     }
 }
