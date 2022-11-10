@@ -4,6 +4,17 @@ namespace Plinia_AuthService.Models;
 
 public class Credentials
 {
+    public Credentials(string email, string password, string username)
+    {
+        Email = email;
+        Password = password;
+        Username = username;
+    }
+
+    public Credentials()
+    {
+    }
+
     [Required]
     [EmailAddress]
     [Display(Name = "Email")]

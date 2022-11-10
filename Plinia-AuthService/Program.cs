@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Plinia_AuthService.DB;
 using Plinia_AuthService.Secure;
+using Plinia_AuthService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-builder.Services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+var jwtSettings = configuration.GetSection("JwtSettings");
+builder.Services.Configure<JwtSettings>(jwtSettings);
 
 // Add connection to MySQL Database.
 var connection = configuration.GetConnectionString("MySQLConnection");
@@ -18,6 +20,7 @@ builder.Services.AddDbContext<UserDbContext>(optionsBuilder =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors());
 
+builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<UserDbContext>();
