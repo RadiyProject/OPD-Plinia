@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using plinia.dbcontexts;
+using plinia.Models;
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -19,7 +20,7 @@ namespace plinia.Controllers
             var users = db.Users.ToList();
             foreach (User u in users)
                 if (u.name == name)
-                    return BadRequestкуRE("Пользователь с таким именем уже существует.");
+                    return BadRequest("Пользователь с таким именем уже существует.");
 
             User user = new User
             {
