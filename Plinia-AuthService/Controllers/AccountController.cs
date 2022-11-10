@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using JWT;
-using JWT.Algorithms;
-using JWT.Serializers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Plinia_AuthService.Models;

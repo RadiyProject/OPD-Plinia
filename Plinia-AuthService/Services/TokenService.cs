@@ -23,18 +23,18 @@ public class TokenService
             { "sub", email },
             { "email", email }
         };
-        return GenerateToken(payload);
+        return GenerateToken(payload, TimeSpan.FromMinutes(30));
     }
 
-    private string GenerateToken(Dictionary<string, object> payload)
+    private string GenerateToken(IDictionary<string, object> payload, TimeSpan timeSpan)
     {
         var secretKey = _settings.SecretKey;
 
         payload.Add("iss", _settings.Issuer);
         payload.Add("aud", _settings.Audience);
-        payload.Add("nbf", ConvertToUnixTimestamp(DateTime.Now));
-        payload.Add("iat", ConvertToUnixTimestamp(DateTime.Now));
-        payload.Add("exp", ConvertToUnixTimestamp(DateTime.Now.AddDays(7)));
+        payload.Add("nbf", DateTime.UtcNow);
+        payload.Add("iat", DateTime.UtcNow);
+        payload.Add("exp", DateTime.UtcNow.Add(timeSpan));
 
         IJwtAlgorithm algorithm = new NoneAlgorithm();
         IJsonSerializer serializer = new JsonNetSerializer();
@@ -42,13 +42,6 @@ public class TokenService
         IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
         return encoder.Encode(payload, secretKey);
-    }
-
-    private object ConvertToUnixTimestamp(DateTime dateTime)
-    {
-        var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        var diff = dateTime.ToUniversalTime() - origin;
-        return Math.Floor(diff.TotalSeconds);
     }
 
     public string GetIdToken(IdentityUser user)
@@ -60,6 +53,6 @@ public class TokenService
             { "email", user.Email },
             { "emailConfirmed", user.EmailConfirmed },
         };
-        return GenerateToken(payload);
+        return GenerateToken(payload, TimeSpan.FromDays(30));
     }
 }

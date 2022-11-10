@@ -20,7 +20,7 @@ builder.Services.AddDbContext<UserDbContext>(optionsBuilder =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors());
 
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddSingleton<TokenService>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<UserDbContext>();
