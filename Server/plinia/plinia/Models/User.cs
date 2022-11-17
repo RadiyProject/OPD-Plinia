@@ -3,6 +3,7 @@
     public class User
     {
         internal string? uuid;
+        internal string premium;
 
         public int id { get; set; }
         public string? name { get; set; }

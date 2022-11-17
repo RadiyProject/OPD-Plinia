@@ -9,6 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Text.Json;
+using plinia.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -49,21 +52,94 @@ namespace plinia.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm] string email, [FromForm] string password)
         {
-            using (UsersContexts db = new UsersContexts)
+            using (UsersContexts db = new UsersContexts())
             {
-                var user = await db.Users.Where(x=> x.email == email).FirstOrDefaultAsync();
+                var user = await db.Users.Where(x => x.email == email).FirstOrDefaultAsync();
 
                 if (user == null)
-                    return BadRequest(SetResponse("Data is incorrect: ", "", "");
+                    return BadRequest(SetResponse("Data is incorrect: ", "", ""));
 
                 var hasher = new PasswordHasher<User>();
 
                 var isCurrentHashValid = hasher.VerifyHashedPassword(user, user.password, password);
 
+                if (isCurrentHashValid != PasswordVerificationResult.Success)
+                    return BadRequest(SetResponse("Data is incorrect: ", "", ""));
 
+                var token = new TokenService(configuration);
+                await token.GenerateToken(user);
+
+                var message = JsonSerializer.Serialize(SetResponse("User logged is successfully!", token.accessToken, token.refreshToken));
+                return Ok(message);
             }
         }
 
+        [HttpPost("register/")]
+        public async Task<IActionResult> Register([FromForm] string name, [FromForm] string email, [FromForm] string password)
+        {
+            using (UsersContexts db = new UsersContexts());
+            {
+                var uuid = Guid.NewGuid();
+
+                var user = new User
+                {
+                    name = name,
+                    email = email,
+                    premium = configuration.GetSection("DefaultParams")["Premium"],
+                    uuid = uuid.ToString()
+                };
+
+                var hasher = new PasswordHasher<User>();
+
+                var hash = hasher.HashPassword(user, password);
+
+                user.password = hash;
+
+                db.Users.Add(user);
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch
+                {
+                    return BadRequest(SetResponse("User with this email already exist.", "", ""));
+                }
+
+                var host = configuration.GetSection("Mail")["Host"];
+
+                var activationLink = host + "/api/user/activate" + uuid.ToString();
+
+                try
+                {
+                    await new MailService(configuration).SendMessage(email, "Mail confirmation " + host, activationLink);
+                }
+                catch (Exception e)
+                {
+                    Console.Write(e);
+                }
+
+                var token = new TokenService(configuration);
+
+                await token.GenerateToken(user);
+
+                var message = JsonSerializer.Serialize(SetResponse("User registered successfully!", token.accessToken, token.refreshToken));
+
+                return Ok(message);
+            }
+        }
+            
+        [HttpGet("logout/{refreshToken}")]
+        public async Task<IActionResult> Logout(string refreshToken)
+        {
+            if (refreshToken == null)
+                return BadRequest("Token wasn`t sent.");
+        }
+
+
+        private object? SetResponse(string v1, string v2, string v3)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
