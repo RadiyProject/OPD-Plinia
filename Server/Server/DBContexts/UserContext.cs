@@ -33,9 +33,9 @@ namespace Server.DBContexts
                     {
                         list.Add(new User()
                         {
-                            id = reader.GetInt32("id"),
-                            name = reader.GetString("name"),
-                            password = reader.GetString("password")
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            Password = reader.GetString("password")
 
                         });
                     }
@@ -57,9 +57,9 @@ namespace Server.DBContexts
                     {
                         user = new User()
                         {
-                            id = reader.GetInt32("id"),
-                            name = reader.GetString("name"),
-                            password = reader.GetString("password")
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            Password = reader.GetString("password")
                         };
                     }
                 }
@@ -80,8 +80,8 @@ namespace Server.DBContexts
                 cmd.ExecuteNonQuery();
             }
 
-            user.name = name;
-            user.password = password;
+            user.Name = name;
+            user.Password = password;
 
             return user;
         }
@@ -104,8 +104,8 @@ namespace Server.DBContexts
                 cmd2.ExecuteNonQuery();
             }
 
-            user.name = name;
-            user.password = password;
+            user.Name = name;
+            user.Password = password;
 
             return user;
         }
