@@ -1,16 +1,85 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using plinia.dbcontexts;
 using plinia.Models;
+using System.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace plinia.Controllers
 {
+    [Route("api/security")]
+    [ApiController]
+    public class AutorizationController : ControllerBase
+    {
+        IConfiguration configuration { get; }
+
+        public AutorizationController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        [HttpGet("activate/{uuid}")]
+        public async Task<IActionResult> Activate(string uuid)
+        {
+            using (UsersContexts db = new UsersContexts())
+            {
+                var user = await db.Users.Where(x => x.uuid == uuid).FirstOrDefaultAsync();
+
+                if (user == null)
+                    return BadRequest("Link is incorrect or user wasn`t found.");
+
+                if (user.mailConfirmed)
+                    return Ok("Mail was confirmed.");
+
+                user.mailConfirmed = true;
+
+                await db.SaveChangesAsync();
+
+                return Ok("Mail confirmed successfully!");
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromForm] string email, [FromForm] string password)
+        {
+            using (UsersContexts db = new UsersContexts)
+            {
+                var user = await db.Users.Where(x=> x.email == email).FirstOrDefaultAsync();
+
+                if (user == null)
+                    return BadRequest(SetResponse("Data is incorrect: ", "", "");
+
+                var hasher = new PasswordHasher<User>();
+
+                var isCurrentHashValid = hasher.VerifyHashedPassword(user, user.password, password);
+
+
+            }
+        }
+
+    }
+
+
+
+    [Route("api/autorize")]
+    [ApiController]
+    public IEnumerable<string> Get()
+    {
+        return new string[] { "value1", "value2" };
+    }
+
+    [HttpGet("{id}")]
+    public string Get(int id)
+    {
+        return "value";
+    }
 
     [HttpPost("/register")]
     public IActionResult Post([FromForm] string name, [FromForm] string email, [FromForm] string password)
@@ -98,7 +167,7 @@ namespace plinia.Controllers
         public ActionResult Delete(int id)
         {
             UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.DeleteNumber(id);
+            var result = context.DeleteUser(id);
             if (result == false)
                 return BadRequest();
             else
