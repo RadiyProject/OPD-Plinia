@@ -13,6 +13,9 @@ public class Credentials
 
     public Credentials()
     {
+        Email = "";
+        Password = "";
+        Username = "";
     }
 
     [Required]

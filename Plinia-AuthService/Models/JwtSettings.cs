@@ -1,7 +1,14 @@
-﻿namespace Plinia_AuthService.Secure;
+﻿namespace Plinia_AuthService.Models;
 
 public class JwtSettings
 {
+    public JwtSettings()
+    {
+        SecretKey = "";
+        Issuer = "";
+        Audience = "";
+    }
+
     public string SecretKey { get; set; }
 
     public string Issuer { get; set; }

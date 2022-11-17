@@ -16,5 +16,9 @@ public sealed class UserDbContext : IdentityDbContext<IdentityUser>
     {
         base.OnModelCreating(builder);
         builder.Entity<IdentityUser>().ToTable("AspNetUsers");
+
+        builder.Entity<IdentityUser>().Property(user => user.Email).IsUnicode();
+        builder.Entity<IdentityUser>().Property(user => user.UserName).IsUnicode();
+        builder.Entity<IdentityUser>().Property(user => user.Id).IsUnicode();
     }
 }

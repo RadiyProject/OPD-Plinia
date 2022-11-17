@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Plinia_AuthService.Models;
@@ -13,7 +13,7 @@ public class AccountController : Controller
     private readonly UserManager<IdentityUser> _userManager;
 
     private readonly SignInManager<IdentityUser> _signInManager;
-    
+
     private readonly TokenService _tokenService;
 
     public AccountController(
@@ -26,7 +26,7 @@ public class AccountController : Controller
         _tokenService = tokenService;
     }
 
-    [HttpPost("Register")]
+    [HttpPost("[action]")]
     public async Task<IActionResult> Register([FromBody] Credentials credentials)
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");
@@ -42,7 +42,7 @@ public class AccountController : Controller
         });
     }
 
-    [HttpPost("SignIn")]
+    [HttpPost("[action]")]
     public async Task<IActionResult> SignIn([FromBody] Credentials credentials)
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");
@@ -50,8 +50,8 @@ public class AccountController : Controller
             isPersistent: false,
             lockoutOnFailure: false);
         if (!result.Succeeded)
-            return new JsonResult("Unable to sign in") { StatusCode = (int)HttpStatusCode.Unauthorized };
-        
+            return new UnauthorizedObjectResult("Unable to sign in");
+
         var user = await _userManager.FindByEmailAsync(credentials.Email);
         return new JsonResult(new Dictionary<string, object>
         {
@@ -60,16 +60,24 @@ public class AccountController : Controller
         });
     }
 
-    private static IActionResult Error(string message)
+    [HttpPost("[action]")]
+    public async Task<IActionResult> Logout(AuthenticationProperties properties)
     {
-        return new JsonResult(message) { StatusCode = (int)HttpStatusCode.BadRequest };
+        if (!ModelState.IsValid) return Error("Unexpected error!");
+        await _signInManager.SignOutAsync();
+        return new SignOutResult(properties);
     }
 
-    private static JsonResult Errors(IdentityResult result)
+    private static IActionResult Error(string message)
+    {
+        return new BadRequestObjectResult(message);
+    }
+
+    private static IActionResult Errors(IdentityResult result)
     {
         var items = result.Errors
             .Select(x => x.Description)
             .ToArray();
-        return new JsonResult(items) { StatusCode = (int)HttpStatusCode.BadRequest };
+        return new BadRequestObjectResult(items);
     }
 }

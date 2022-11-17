@@ -3,7 +3,7 @@ using JWT.Algorithms;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Plinia_AuthService.Secure;
+using Plinia_AuthService.Models;
 
 namespace Plinia_AuthService.Services;
 
