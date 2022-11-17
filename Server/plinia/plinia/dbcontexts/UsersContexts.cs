@@ -6,6 +6,7 @@ namespace plinia.dbcontexts
     public class UsersContexts : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public object Tokens { get; internal set; }
 
         public UsersContexts()
         {

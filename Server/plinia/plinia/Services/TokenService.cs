@@ -1,6 +1,8 @@
 ﻿using plinia.Models;
 using System.Security.Claims;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace plinia.Services
 {
@@ -8,7 +10,6 @@ namespace plinia.Services
     {
         public string? accessToken { get; private set; }
         public string? refreshToken { get; private set; }
-        public object SecurityAlgorithms { get; private set; }
 
         private IConfiguration configuration;
 
@@ -50,6 +51,7 @@ namespace plinia.Services
 
         JwtSecurityToken CreateToken(string issuer, string audience, IEnumerable<Claim> claims, TimeSpan lifeTime, string key)
         {
+
             var jwt = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
@@ -67,31 +69,5 @@ namespace plinia.Services
         }
     }
 
-    internal class SigningCredentials
-    {
-        private object v;
-        private object hmacSha256;
-
-        public SigningCredentials(object v, object hmacSha256)
-        {
-            this.v = v;
-            this.hmacSha256 = hmacSha256;
-        }
-    }
-
-    internal class JwtSecurityToken
-    {
-    }
-
-    internal class JwtSecurityTokenHandler
-    {
-        public JwtSecurityTokenHandler()
-        {
-        }
-
-        internal string? WriteToken(object jwt)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    
 }

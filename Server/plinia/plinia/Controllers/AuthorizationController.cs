@@ -95,15 +95,20 @@ namespace plinia.Controllers
 
                 user.password = hash;
 
-                db.Users.Add(user);
-                try
+                using (UsersContexts db = new UsersContexts())
                 {
-                    await db.SaveChangesAsync();
+                    db.Users.Add(user);
+                    try
+                    {
+                        await db.SaveChangesAsync();
+                    }
+                    catch
+                    {
+                        return BadRequest(SetResponse("User with this email already exist.", "", ""));
+                    }
                 }
-                catch
-                {
-                    return BadRequest(SetResponse("User with this email already exist.", "", ""));
-                }
+
+                    
 
                 var host = configuration.GetSection("Mail")["Host"];
 
@@ -133,6 +138,7 @@ namespace plinia.Controllers
         {
             if (refreshToken == null)
                 return BadRequest("Token wasn`t sent.");
+            else return Ok();
         }
 
 
@@ -140,114 +146,150 @@ namespace plinia.Controllers
         {
             throw new NotImplementedException();
         }
-    }
 
 
 
-    [Route("api/autorize")]
-    [ApiController]
-    public IEnumerable<string> Get()
-    {
-        return new string[] { "value1", "value2" };
-    }
 
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
 
-    [HttpPost("/register")]
-    public IActionResult Post([FromForm] string name, [FromForm] string email, [FromForm] string password)
-    {
-        using (UsersContexts db = new UsersContexts())
+        public IEnumerable<string> Get()
         {
-            var users = db.Users.ToList();
-            foreach (User u in users)
-                if (u.name == name)
-                    return BadRequest("Пользователь с таким именем уже существует.");
-
-            User user = new User
-            {
-                name = name,
-                email = email,//добавить проверку на существование почты
-                password = password
-            };
-
-            db.Users.Add(user);
-            db.SaveChanges();
-        }
-        return Ok("Пользователь успешно зарегистрирован!");
-    }
-
-    IActionResult BadRequestResult(string v)
-    {
-        throw new NotImplementedException();
-    }
-
-    [Route("api/user")]
-    [ApiController]
-    public class UserController : ControllerBase
-    {
-        string[] objs = { "1", "3", "2", "4", "6" };
-        // GET: api/<UserController>
-        [HttpGet("getall")]
-        public ActionResult Get()
-        {
-            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.GetAllUsers();
-            if (result == null)
-                return NoContent();
-            else
-                return Ok(result);
+            return new string[] { "value1", "value2" };
         }
 
-        // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public ActionResult Get(int id)
+        public string Get(int id)
         {
-            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.GetUser(id);
-            if (result == null)
-                return NoContent();
-            else
-                return Ok(result);
+            return "value";
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public ActionResult Post([FromForm] IFormCollection data)
+        [HttpPost("/register")]
+        public IActionResult Post([FromForm] string name, [FromForm] string email, [FromForm] string password)
         {
-            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.AddUser(data["name"], data["password"]);
-            if (result == null)
-                return BadRequest();
-            else
-                return Ok(result);
+            using (UsersContexts db = new UsersContexts())
+            {
+                var users = db.Users.ToList();
+                foreach (User u in users)
+                    if (u.name == name)
+                        return BadRequest("Пользователь с таким именем уже существует.");
+
+                User user = new User
+                {
+                    name = name,
+                    email = email,//добавить проверку на существование почты
+                    password = password
+                };
+
+                db.Users.Add(user);
+                db.SaveChanges();
+            }
+            return Ok("Пользователь успешно зарегистрирован!");
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromForm] IFormCollection data)
+        IActionResult BadRequestResult(string v)
         {
-            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.ChangeUser(id, data["name"], data["password"]);
-            if (result == null)
-                return BadRequest();
-            else
-                return Ok(result);
+            throw new NotImplementedException();
         }
 
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        [Route("api/user")]
+        [ApiController]
+        public class UserController : ControllerBase
         {
-            UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
-            var result = context.DeleteUser(id);
-            if (result == false)
-                return BadRequest();
-            else
-                return Ok(result);
-        }
-    }
+            string[] objs = { "1", "3", "2", "4", "6" };
+            private object tokenData;
+
+            // GET: api/<UserController>
+            [HttpGet("getall")]
+            public ActionResult Get()
+            {
+                UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+                using (UsersContexts db = new UsersContexts())
+                {
+                    var result = db.Users.ToList();
+                    if (result == null)
+                        return NoContent();
+                    else
+                        return Ok(result);
+                }
+
+            }
+
+            // GET api/<UserController>/5
+            [HttpGet("{id}")]
+            public ActionResult Get(int id)
+            {
+                UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+                using (UsersContexts db = new UsersContexts())
+                {
+                    var result = db.Users.Where(x => x.id == id).FirstOrDefaultAsync();
+                    if (result == null)
+                        return NoContent();
+                    else
+                        return Ok(result);
+                }
+
+            }
+
+            // POST api/<UserController>
+            // add user
+            [HttpPost]
+            public ActionResult Post([FromForm] IFormCollection data)
+            {
+                using (UsersContexts db = new UsersContexts())
+                {
+                    var user = new User()
+                    {
+                        name = data["name"],
+                        password = data["password"],
+                        email = data["email"],
+                    };
+
+                    db.Users.Add(user);
+                    try
+                    {
+                         db.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        return BadRequest("ok");
+                    }
+                    return Ok();
+                }
+
+                    
+            }
+            
+
+
+
+            // PUT api/<UserController>/5
+            [HttpPut("{id}")]
+            public ActionResult Put(int id, [FromForm] IFormCollection data)
+            {
+                UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+                var result = context.ChangeUser(id, data["name"], data["password"]);
+                if (result == null)
+                    return BadRequest();
+                else
+                    return Ok(result);
+            }
+
+            // DELETE api/<UserController>/5
+            [HttpDelete("{id}")]
+            public async ActionResult Delete(int id)
+            {
+                UsersContexts context = HttpContext.RequestServices.GetService(typeof(UsersContexts)) as UsersContexts;
+                using (UsersContexts db = new UsersContexts())
+                {
+                    var result = db.Tokens.Remove(tokenData);
+                    await db.SaveChangesAsync(); ;
+                    if (result == false)
+                        return BadRequest();
+                    else
+                        return Ok(result);
+                }
+                    
+            }
+        }   
+    }   
 }
