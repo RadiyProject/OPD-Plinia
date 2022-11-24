@@ -68,6 +68,4 @@ namespace plinia.Services
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
         }
     }
-
-    
 }
