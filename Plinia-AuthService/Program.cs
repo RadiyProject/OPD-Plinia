@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Plinia_AuthService.DB;
-using Plinia_AuthService.Secure;
+using Plinia_AuthService.Models;
 using Plinia_AuthService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +20,7 @@ builder.Services.AddDbContext<UserDbContext>(optionsBuilder =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors());
 
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddSingleton<TokenService>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<UserDbContext>();

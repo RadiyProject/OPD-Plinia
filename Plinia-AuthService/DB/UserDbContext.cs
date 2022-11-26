@@ -16,5 +16,6 @@ public sealed class UserDbContext : IdentityDbContext<IdentityUser>
     {
         base.OnModelCreating(builder);
         builder.Entity<IdentityUser>().ToTable("AspNetUsers");
+        builder.Entity<IdentityUser>().HasIndex("Email").IsUnique();
     }
 }

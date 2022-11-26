@@ -11,10 +11,6 @@ public class Credentials
         Username = username;
     }
 
-    public Credentials()
-    {
-    }
-
     [Required]
     [EmailAddress]
     [Display(Name = "Email")]
