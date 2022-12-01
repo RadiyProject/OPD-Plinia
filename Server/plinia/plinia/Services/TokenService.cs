@@ -20,10 +20,10 @@ namespace plinia.Services
 
         public async Task<string> GenerateToken(User? user)
         {
-            if (user == null || user.email == null || user.premium == null)
+            if (user == null || user.email == null)
                 return "User value is empty.";
 
-            var claims = new List<Claim> { new Claim(ClaimTypes.Email, user.email), new Claim(ClaimTypes.Role, user.premium) };
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, user.email)};
 
             var lifeTime = 0;
 

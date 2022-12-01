@@ -2,13 +2,10 @@
 {
     public class User
     {
-        internal string? uuid;
-        internal string premium;
-
         public int id { get; set; }
         public string? name { get; set; }
         public string? email { get; set; }
         public string? password { get; set; }
-        public bool mailConfirmed { get; internal set; }
+        public bool mailConfirmed { get; set; }
     }
 }
