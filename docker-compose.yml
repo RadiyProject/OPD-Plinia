@@ -1,0 +1,32 @@
+﻿version: '3.4'
+services:
+  plinia-authservice:
+    image: plinia-authservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "49827:80"
+    networks:
+      - localnet
+  db-mysql:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=opd3-plinia
+      - MYSQL_ROOT_PASSWORD=plinia
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-mysql:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - localnet
+
+volumes:
+  db-mysql:
+  driver:
+    name: local
+networks:
+  localnet:
+  external:
