@@ -16,7 +16,7 @@ services:
       - MYSQL_DATABASE=opd3-plinia
       - MYSQL_ROOT_PASSWORD=plinia
     ports:
-      - "33061:3306"
+      - "3306:3306"
     volumes:
       - db-mysql:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
