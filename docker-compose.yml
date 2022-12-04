@@ -1,32 +1,26 @@
 ﻿version: '3.4'
 services:
   plinia-authservice:
-    image: plinia-authservice
+    image: ${DOCKER_REGISTRY-}plinia-authservice
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "49827:80"
-    networks:
-      - localnet
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
   db-mysql:
     image: mysql
     restart: always
     environment:
       - MYSQL_DATABASE=opd3-plinia
+      - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=plinia
     ports:
-      - "3306:3306"
+      - "5001:3306"
     volumes:
       - db-mysql:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - localnet
-
 volumes:
   db-mysql:
-  driver:
-    name: local
-networks:
-  localnet:
-  external:
+  appbuild:

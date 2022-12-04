@@ -7,7 +7,7 @@ using Plinia_AuthService.Services;
 namespace Plinia_AuthService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -26,7 +26,7 @@ public class AccountController : Controller
         _tokenService = tokenService;
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("")]
     public async Task<IActionResult> Register([FromBody] Credentials credentials)
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");
@@ -42,7 +42,7 @@ public class AccountController : Controller
         });
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("")]
     public async Task<IActionResult> SignIn([FromBody] Credentials credentials)
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");
@@ -60,7 +60,7 @@ public class AccountController : Controller
         });
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("")]
     public async Task<IActionResult> Logout(AuthenticationProperties properties)
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");

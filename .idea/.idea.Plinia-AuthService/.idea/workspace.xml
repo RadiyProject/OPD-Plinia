@@ -6,21 +6,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="41c332ac-8779-4833-8624-fd36ca476d82" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plinia-AuthService.sln" beforeDir="false" afterPath="$PROJECT_DIR$/OPD-Plinia.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plinia-AuthService/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plinia-AuthService/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plinia-AuthService/Models/JwtSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plinia-AuthService/Models/JwtSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Plinia-AuthService/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/0b2b71b9a548475f9db13de2a63308dea234a8/e4/131c90a9/020008C3pdb1154.il" root0="SKIP_HIGHLIGHTING" />
