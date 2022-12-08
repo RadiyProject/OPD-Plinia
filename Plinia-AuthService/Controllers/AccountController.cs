@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Plinia_AuthService.Models;
 using Plinia_AuthService.Services;
@@ -61,11 +60,11 @@ public class AccountController : Controller
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Logout(AuthenticationProperties properties)
+    public async Task<IActionResult> Logout()
     {
         if (!ModelState.IsValid) return Error("Unexpected error!");
         await _signInManager.SignOutAsync();
-        return new SignOutResult(properties);
+        return new SignOutResult();
     }
 
     private static IActionResult Error(string message)
